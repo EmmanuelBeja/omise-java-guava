@@ -1,0 +1,39 @@
+{
+  "object": "schedule",
+  "id": "schd_test_57wedy7pc6v9i59xpbx",
+  "livemode": false,
+  "location": "/schedules/schd_test_57wedy7pc6v9i59xpbx",
+  "status": "running",
+  "deleted": false,
+  "every": 1,
+  "period": "week",
+  "on": {
+    "weekdays": [
+      "monday"
+    ]
+  },
+  "in_words": "Every 1 week(s) on Monday",
+  "start_on": "2017-05-08",
+  "end_on": "2116-05-08",
+  "charge": {
+    "object": "scheduled_charge",
+    "amount": 2000,
+    "currency": "thb",
+    "customer": "cust_test_57wedy5a1tdt0bf89iy",
+    "card": null
+  },
+  "occurrences": {
+    "object": "list",
+    "from": "1970-01-01T00:00:00+00:00",
+    "to": "2017-05-08T10:49:26+00:00",
+    "offset": 0,
+    "limit": 20,
+    "total": 0,
+    "order": null,
+    "location": "/schedules/schd_test_57wedy7pc6v9i59xpbx/occurrences",
+    "data": [
+
+    ]
+  },
+  "created_at": "2017-05-08T09:51:19Z"
+}

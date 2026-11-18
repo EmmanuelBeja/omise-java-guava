@@ -1,0 +1,83 @@
+{
+  "object": "charge",
+  "id": "chrg_test_4yq7duw15p9hdrjp8oq",
+  "livemode": false,
+  "location": "/charges/chrg_test_4yq7duw15p9hdrjp8oq",
+  "amount": 100000,
+  "currency": "thb",
+  "description": "Charge for order 3947",
+  "status": "successful",
+  "capture": true,
+  "authorized": true,
+  "authentication": "PASSKEY",
+  "authenticated_by": "PASSKEY",
+  "transaction": "trxn_test_4yq7duwb9jts1vxgqua",
+  "paid": true,
+  "refunded_amount": 0,
+  "refunds": {
+    "object": "list",
+    "from": "1970-01-01T00:00:00+00:00",
+    "to": "2016-01-28T07:44:37+00:00",
+    "offset": 0,
+    "limit": 20,
+    "total": 0,
+    "order": null,
+    "location": "/charges/chrg_test_52u3iklojvzzkz26a1w/refunds",
+    "data": [
+    ]
+  },
+  "failure_code": null,
+  "failure_message": null,
+  "card": {
+    "object": "card",
+    "id": "card_test_4yq6tuucl9h4erukfl0",
+    "livemode": false,
+    "location": "/customers/cust_test_4yq6txdpfadhbaqnwp3/cards/card_test_4yq6tuucl9h4erukfl0",
+    "country": "us",
+    "city": "Bangkok",
+    "postal_code": "10320",
+    "financing": "",
+    "bank": "",
+    "last_digits": "4242",
+    "brand": "Visa",
+    "expiration_month": 1,
+    "expiration_year": 2017,
+    "fingerprint": "sRF/oMw2UQJJp/WbU+2/ZbVzwROjpMf1lyhOHhOqziw=",
+    "name": "JOHN DOE",
+    "security_code_check": true,
+    "created_at": "2015-01-15T04:03:40Z"
+  },
+  "customer": "cust_test_4yq6txdpfadhbaqnwp3",
+  "ip": null,
+  "dispute": null,
+  "created_at": "2016-07-14T07:09:08Z",
+  "source": {
+    "object": "source",
+    "id": "src_test_5929c3tjts3omoi7ti2",
+    "references": {
+      "omise_tax_id": "0105556091152",
+      "reference_number_1": "789164909013218240",
+      "reference_number_2": "437059934205645755",
+      "barcode": "https://api.omise.co/charges/chrg_test_59o3j8ukevxlvj1vo5p/documents/docu_test_59o3j8xlm2n5qew173e/downloads/6B5B4C0F8DE54221",
+      "expires_at": "2017-10-19T06:25:08Z"
+    },
+    "scannable_code": {
+      "object": "barcode",
+      "type": "qr",
+      "image": {
+        "object": "document",
+        "livemode": false,
+        "id": "docu_test_5jdqwq09nqt0dgqxln3",
+        "deleted": false,
+        "filename": "barcode.jpg",
+        "location": "/charges/chrg_test_5jdqwpynn761fah9ytu/documents/docu_test_5jdqwq09nqt0dgqxln3",
+        "download_uri": "https://api.omise.co/charges/chrg_test_5jdqwpynn761fah9ytu/documents/docu_test_5jdqwq09nqt0dgqxln3/downloads/4A26C70C744CDCD0",
+        "created_at": "2020-03-30T05:01:03Z"
+      }
+    },
+    "type": "mobile_banking_scb",
+    "flow": "app_redirect",
+    "amount": 100000,
+    "currency": "thb"
+  }
+}

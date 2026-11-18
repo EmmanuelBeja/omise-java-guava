@@ -1,0 +1,189 @@
+apply plugin: 'java'
+apply plugin: 'java-library-distribution'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+apply plugin: 'io.github.goooler.shadow'
+apply plugin: 'com.github.ben-manes.versions'
+apply plugin: 'jacoco'
+apply plugin: 'org.sonarqube'
+apply plugin: 'io.github.gradle-nexus.publish-plugin'
+
+group 'co.omise'
+version '5.3.0'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 8
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    dependencies {
+        classpath "io.github.goooler.shadow:shadow-gradle-plugin:8.1.8"
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.42.0'
+        classpath("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:5.1.0.4882")
+        classpath "io.github.gradle-nexus:publish-plugin:2.0.0"
+    }
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+distributions {
+    main {
+        archivesBaseName = 'omise-java'
+    }
+}
+
+javadoc {
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.12"
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+        csv.required = true
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+    }
+}
+
+// REF: https://docs.gradle.org/current/userguide/publishing_maven.html
+publishing {
+    publications {
+        release(MavenPublication) {
+            publication ->
+                artifact jar
+                artifactId = 'omise-java'
+                artifact sourcesJar
+                artifact javadocJar
+            pom {
+                name = 'Omise Java'
+                description = 'Java bindings for the Omise API'
+                packaging = 'jar'
+                url = 'https://www.omise.co'
+
+                scm {
+                    connection = 'scm:git:git://git.github.com/omise/omise-java'
+                    developerConnection = 'scm:git:git://git.github.com/omise/omise-java'
+                    url = 'https://github.com/omise/omise-java'
+                }
+
+                licenses {
+                    license {
+                        name = 'The MIT License (MIT)'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'chakrit'
+                        name = 'Omise'
+                        email = 'support@omise.co'
+                    }
+                }
+       withXml {
+                    def dependenciesNode = asNode().appendNode('dependencies')
+                    configurations.implementation.allDependencies.each {
+                        if (it.group != null && (it.name != null || "unspecified" == it.name) && it.version != null) {
+                            def dependencyNode = dependenciesNode.appendNode('dependency')
+                            dependencyNode.appendNode('groupId', it.group)
+                            dependencyNode.appendNode('artifactId', it.name)
+                            dependencyNode.appendNode('version', it.version)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+signing {
+    def signingKey = System.getenv("PGP_SIGNING_KEY")
+    def signingPwd = System.getenv("PGP_SIGNING_PASSWORD")
+
+    useInMemoryPgpKeys(signingKey, signingPwd)
+    sign publishing.publications.release
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl = uri("https://ossrh-staging-api.central.sonatype.com/service/local/")
+            snapshotRepositoryUrl = uri("https://central.sonatype.com/repository/maven-snapshots/")
+            username = System.getenv("SONATYPE_USERNAME")
+            password = System.getenv("SONATYPE_PASSWORD")
+        }
+    }
+}
+
+/**
+ * {@link Package#getImplementationVersion()} on IDE will alway return `null`
+ * because this method read data from `META-INF/MANIFEST.MF` that contain in `.jar`.
+ * If need to check it, you have to run directly to `.jar` will return correct value.
+ *
+ * Run `gradle shadowJar` and `unzip -p build/libs/omise-java-3.0.0-all.jar META-INF/MANIFEST.MF`
+ * will return attributes in manifest file.
+ */
+jar {
+    manifest {
+        attributes 'Implementation-Version': version
+    }
+}
+
+shadowJar {
+    // Include all manifest from jar to shadowJar
+    manifest {
+        inheritFrom jar.manifest
+    }
+    relocate 'okhttp3', 'co.omise.dependencies.okhttp3'
+    relocate 'okio', 'co.omise.dependencies.okio'
+    relocate 'com.fasterxml.jackson', 'co.omise.dependencies.com.fasterxml.jackson'
+}
+
+dependencies {
+    // persistence
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.20.1'
+    // Java 8 data/time serializer
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.1'
+
+    // networking
+    implementation 'com.squareup.okhttp3:okhttp:5.3.2'
+
+    // test
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'com.google.guava:guava:33.5.0-jre'
+
+}
+
+sonar {
+    properties {
+        property 'sonar.host.url', 'https://sonarcloud.io'
+        property 'sonar.organization', 'omise'
+        property 'sonar.projectName', 'omise-java'
+        property 'sonar.projectKey', 'omise_omise-java'
+        property 'sonar.coverage.jacoco.xmlReportPaths', "${project.buildDir}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
+        property 'sonar.junit.reportPaths', "${project.buildDir}/test-results/testProductionDebugUnitTest"
+    }
+}
