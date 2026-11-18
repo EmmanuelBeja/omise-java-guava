@@ -173,7 +173,7 @@ dependencies {
 
     // test
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'com.google.guava:guava:33.5.0-jre'
+    testImplementation 'com.google.guava:guava:33.7.1-jre'
 
 }
 
